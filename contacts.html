@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Emergency Contacts</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #e91e63;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"], button, .cancel-button {
+            background-color: #e91e63;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover, button:hover, .cancel-button:hover {
+            background-color: #c2185b;
+        }
+
+        .cancel-button {
+            background-color: #9e9e9e;
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 16px;
+        }
+
+        table {
+            width: 90%;
+            margin: 40px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #fce4ec;
+            color: #880e4f;
+        }
+
+        tr:hover {
+            background-color: #f8bbd0;
+        }
+
+        a {
+            color: #e91e63;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back-button-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .back-button {
+            text-decoration: none;
+            background-color: #607d8b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+        }
+
+        .back-button:hover {
+            background-color: #455a64;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .no-contacts {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Emergency Contacts</h1>
+
+    {% if edit_contact %}
+        <h2>Edit Contact</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="update_id" value="{{ edit_contact.id }}">
+            
+            <label>Name:</label>
+            <input type="text" name="name" value="{{ edit_contact.name }}" required>
+
+            <label>Phone Number:</label>
+            <input type="text" name="phone" value="{{ edit_contact.phone_number }}" required>
+
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ edit_contact.email }}" required>
+
+            <input type="submit" value="Update Contact">
+            <a href="{% url 'manage_contacts' %}" class="cancel-button">Cancel</a>
+        </form>
+    {% else %}
+        <h2>Add Contact</h2>
+        <form method="POST" action="{% url 'manage_contacts' %}">
+            {% csrf_token %}
+            <label>Name:</label>
+            <input type="text" name="name" required>
+
+            <label>Phone Number:</label>
+            <input type="text" name="phone" required>
+
+            <label>Email:</label>
+            <input type="email" name="email" required>
+
+            <input type="submit" value="Add Contact">
+        </form>
+    {% endif %}
+
+    <div class="back-button-container">
+        <a href="{% url 'home' %}" class="back-button">← Back to Home</a>
+    </div>
+
+    <h2>Your Contacts</h2>
+    {% if contacts %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+            {% for contact in contacts %}
+                <tr>
+                    <td>{{ contact.name }}</td>
+                    <td>{{ contact.phone_number }}</td>
+                    <td>{{ contact.email }}</td>
+                    <td class="actions">
+                        <form action="{% url 'delete_contact' contact.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                        <a href="?edit={{ contact.id }}">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="no-contacts">No contacts added yet.</p>
+    {% endif %}
+</body>
+</html>

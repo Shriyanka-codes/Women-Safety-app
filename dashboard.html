@@ -1,0 +1,17 @@
+<form id="sosForm" method="post" action="{% url 'trigger_sos' %}">
+    {% csrf_token %}
+    <input type="hidden" name="latitude" id="lat">
+    <input type="hidden" name="longitude" id="lon">
+</form>
+
+
+<script>
+document.getElementById('sos').onclick = () => {
+  if (!navigator.geolocation) return alert('Location not supported');
+  navigator.geolocation.getCurrentPosition(pos => {
+    document.getElementById('lat').value = pos.coords.latitude;
+    document.getElementById('lon').value = pos.coords.longitude;
+    document.getElementById('sosForm').submit();
+  });
+};
+</script>

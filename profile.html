@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .profile-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .profile-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e91e63;
+        }
+
+        .profile-box p {
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        .profile-box a {
+            display: inline-block;
+            margin-top: 15px;
+            margin-right: 10px;
+            padding: 8px 16px;
+            background: #e91e63;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .profile-box a:hover {
+            background: #c2185b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-box">
+        <h2>{{ profile.user.username|capfirst }}'s Profile</h2>
+
+        <p><strong>Email:</strong> {{ profile.user.email }}</p>
+        <p><strong>Phone:</strong> {{ profile.phone|default:"Not provided" }}</p>
+        <p><strong>Address:</strong> {{ profile.address|default:"Not provided" }}</p>
+
+        <a href="{% url 'edit_profile' %}">Edit Profile</a>
+        <a href="{% url 'home' %}">Back</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+<h2>⚖️ Legal Rights & Helplines</h2>
+{% for item in infos %}
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.description }}</p>
+    {% if item.helpline_number %}
+        <strong>Helpline:</strong> {{ item.helpline_number }}
+    {% endif %}
+    <hr>
+{% endfor %}

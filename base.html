@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Women Safety</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!-- 💬 Chat Icon -->
+<div id="chatbot-icon" onclick="toggleChat()">
+    💬
+</div>
+
+<!-- 💬 Chatbot Box -->
+<div id="chatbot-box">
+    <div id="chatbot-header">
+        SafetyBot
+        <span onclick="toggleChat()">✖</span>
+    </div>
+    <div id="chatbot-messages">
+        <div class="bot-msg">Hi! I'm here to help. Ask me anything about safety, SOS, or legal help!</div>
+    </div>
+    <form id="chatbot-form">
+        <input type="text" id="chatbot-input" placeholder="Type your message..." required>
+        <button type="submit">➤</button>
+    </form>
+</div>
+
+<!-- 💬 Styles -->
+<style>
+#chatbot-icon {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #e91e63;
+    color: white;
+    padding: 14px 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#chatbot-box {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    bottom: 90px;
+    right: 25px;
+    width: 320px;
+    max-height: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 999;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#chatbot-header {
+    background-color: #e91e63;
+    color: white;
+    padding: 10px 15px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#chatbot-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+.bot-msg, .user-msg {
+    background-color: #fce4ec;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    max-width: 90%;
+}
+
+.user-msg {
+    background-color: #f0f0f0;
+    align-self: flex-end;
+    text-align: right;
+}
+
+#chatbot-form {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+#chatbot-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+}
+
+#chatbot-form button {
+    background-color: #e91e63;
+    color: white;
+    border: none;
+    margin-left: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+</style>
+
+<!-- 💬 Chatbot Script -->
+<script>
+function toggleChat() {
+    const box = document.getElementById('chatbot-box');
+    box.style.display = box.style.display === 'none' || box.style.display === '' ? 'flex' : 'none';
+}
+
+document.getElementById('chatbot-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('chatbot-input');
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
+
+    const msgBox = document.getElementById('chatbot-messages');
+    msgBox.innerHTML += `<div class="user-msg">${userMessage}</div>`;
+
+    let response = "Sorry, I didn't understand. Try asking about help, legal rights, or SOS.";
+
+    const msg = userMessage.toLowerCase();
+
+    if (msg.includes('help')) {
+        response = "You can reach out via the contact form or call helpline 1091 or 181.";
+    } else if (msg.includes('legal')) {
+        response = "You have rights under IPC 354, 509. Dial 181 for legal aid.";
+    } else if (msg.includes('sos') || msg.includes('report')) {
+        response = "Go to the Report page and press the SOS button to alert your contacts.";
+    } else if (msg.includes('hi') || msg.includes('hello')) {
+        response = "Hello! How can I help you stay safe today?";
+    }
+
+    msgBox.innerHTML += `<div class="bot-msg">${response}</div>`;
+    msgBox.scrollTop = msgBox.scrollHeight;
+    input.value = '';
+});
+</script>
+
+</head>
+<body>
+    <nav>
+        <a href="{% url 'home' %}">Home</a>
+        {% if user.is_authenticated %}
+            <a href="/sos/" style="color:#ff4081; font-weight:bold;">🆘 SOS</a>
+            <a href="/logout/">Logout</a>
+            <a href="{% url 'manage_contacts' %}">Contacts</a>
+            <a href="/notifications/">Legal Info</a> 
+            <a href="/map/">Live location</a>
+            <a href="/about/">About Us</a>
+            <a href="/profile/">profile</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+
+    <!-- 🔽🔽 Add this to show page-specific content -->
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

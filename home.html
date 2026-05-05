@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .header {
+        background-color: #e91e63;
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .main {
+        padding: 40px 20px;
+        max-width: 900px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .section {
+        margin-top: 50px;
+        text-align: left;
+    }
+
+    .section h3 {
+        color: #e91e63;
+        margin-bottom: 10px;
+    }
+
+    .section p {
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 13px;
+        color: #999;
+    }
+
+    .video-section {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .video-section iframe {
+        margin: 10px;
+        width: 300px;
+        height: 180px;
+        border-radius: 10px;
+    }
+</style>
+
+<div class="header">
+    <h1>Welcome to Women Safety App</h1>
+    <p>Please login to report an emergency.</p>
+</div>
+
+<div class="main">
+    <!-- ✅ Always show this -->
+    <div class="section">
+        <h3>🔒 About the App</h3>
+        <p>
+            The Women Safety App is designed to help women feel safer by offering emergency reporting, live location tracking,
+            and quick contact features. It allows users to trigger SOS alerts to their emergency contacts and nearby help centers instantly.
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>👩‍💻 About the Creators</h3>
+        <p>
+            This project is developed by a team of passionate students/developers committed to women's safety and security.
+            The goal is to use technology to make emergency assistance faster and more accessible.
+        </p>
+    </div>
+
+
+  <div class="section">
+    <h3>❓ Need Help?</h3>
+    <p>
+        For any technical issues, feedback, or suggestions, feel free to contact the development team below:
+    </p>
+
+    <ul style="list-style-type: none; padding-left: 0; color: #444;">
+        <li><strong>Sumithra C</strong> – <a href="mailto:sumithrachinnu402@gmail.com">sumithrachinnu402@gmail.com</a></li>
+        <li><strong>Shriyanka M</strong> – <a href="mailto:shriyankaM@gmail.com">shriyankaM@gmail.com</a></li>
+   
+    </ul>
+
+    <p>
+        Make sure to add emergency contacts in your profile and keep your location turned on for full protection features.
+    </p>
+</div>
+
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="section">
+            <p><strong>Hello, {{ user.username }}! Stay safe.</strong></p>
+        </div>
+
+        <div class="video-section">
+            <h3>🧠 Self Defense & Awareness</h3>
+        </div>
+    {% endif %}
+</div>
+
+<div class="footer">
+    &copy; 2025 Women Safety App. All rights reserved.
+</div>
+{% endblock %}

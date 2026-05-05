@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Send SOS Alert</h2>
+<p>Click the button below to send your current location and SOS message to emergency contacts.</p>
+
+<button onclick="sendSOS()" style="background-color:#e91e63; color:white; padding:10px 20px; font-size:16px;">
+    🚨 Send SOS Alert
+</button>
+
+<script>
+function sendSOS() {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        fetch("/report/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                message: "Emergency reported!",
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude
+            })
+        }).then(res => res.json()).then(data => {
+            alert(data.msg);
+        }).catch(error => {
+            alert("Failed to send SOS alert.");
+            console.error(error);
+        });
+    }, function(err) {
+        alert("Location access denied: " + err.message);
+    });
+}
+</script>
+{% endblock %}

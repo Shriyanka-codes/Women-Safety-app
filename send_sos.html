@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .sos-page {
+    font-family: 'Inter', sans-serif;
+    min-height: 90vh;
+    background: linear-gradient(145deg, #1a0005 0%, #2d0010 40%, #1a0005 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Animated background rings */
+  .bg-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(233, 30, 99, 0.12);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: expandRing 4s ease-out infinite;
+    pointer-events: none;
+  }
+  .bg-ring:nth-child(1) { width: 700px; height: 700px; animation-delay: 0s; }
+  .bg-ring:nth-child(2) { width: 500px; height: 500px; animation-delay: 1.3s; }
+  .bg-ring:nth-child(3) { width: 300px; height: 300px; animation-delay: 2.6s; }
+
+  @keyframes expandRing {
+    0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+  }
+
+  .sos-card {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .sos-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    padding: 6px 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+
+  .sos-heading {
+    font-size: 40px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+
+  .sos-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 48px;
+    line-height: 1.7;
+  }
+
+  /* ── Button ── */
+  .sos-btn-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(233, 30, 99, 0.25);
+    animation: pulsate 2s ease-out infinite;
+  }
+  .pulse-ring:nth-child(2) { animation-delay: 0.66s; }
+  .pulse-ring:nth-child(3) { animation-delay: 1.33s; }
+
+  @keyframes pulsate {
+    0%   { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  #sosButton {
+    position: relative;
+    z-index: 2;
+    width: 168px; height: 168px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.25);
+    background: linear-gradient(145deg, #ff1744, #b71c1c);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow:
+      0 0 0 10px rgba(233,30,99,0.18),
+      0 24px 64px rgba(233,30,99,0.55),
+      inset 0 -4px 14px rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  #sosButton .btn-icon { font-size: 36px; line-height: 1; }
+  #sosButton .btn-text { font-size: 22px; font-weight: 900; letter-spacing: 5px; }
+  #sosButton .btn-sub  { font-size: 10px; font-weight: 600; letter-spacing: 2px; color: rgba(255,255,255,0.7); }
+
+  #sosButton:hover:not(:disabled) {
+    transform: scale(1.07);
+    box-shadow:
+      0 0 0 10px rgba(233,30,99,0.28),
+      0 32px 80px rgba(233,30,99,0.7),
+      inset 0 -4px 14px rgba(0,0,0,0.35);
+  }
+  #sosButton:active:not(:disabled) { transform: scale(0.95); }
+  #sosButton:disabled {
+    cursor: not-allowed;
+    background: linear-gradient(145deg, #555, #333);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  /* ── Status boxes ── */
+  .status-box {
+    display: none;
+    padding: 16px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    animation: fadeIn 0.35s ease;
+    text-align: left;
+    line-height: 1.6;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .status-loading  { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); }
+  .status-success  { background: rgba(38,166,91,0.14);  border: 1px solid rgba(38,166,91,0.38);  color: #66bb85; }
+  .status-error    { background: rgba(255,82,82,0.12);  border: 1px solid rgba(255,82,82,0.3);   color: #ff7070; }
+  .status-warning  { background: rgba(255,193,7,0.11);  border: 1px solid rgba(255,193,7,0.3);   color: #ffd54f; }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Coords ── */
+  #locationDisplay {
+    display: none;
+    font-size: 12px;
+    color: rgba(255,255,255,0.32);
+    margin-top: -34px;
+    margin-bottom: 36px;
+  }
+
+  /* ── Info cards ── */
+  .info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+    text-align: left;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px;
+    transition: background 0.2s;
+  }
+  .info-card:hover { background: rgba(255,255,255,0.07); }
+  .info-card .ic-icon  { font-size: 20px; margin-bottom: 8px; }
+  .info-card .ic-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
+  .info-card .ic-value { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.72); }
+
+  /* ── Contacts list ── */
+  .contacts-section {
+    margin-top: 28px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align: left;
+  }
+  .contacts-section h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 14px;
+  }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .contact-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .contact-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e91e63, #880e4f);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .contact-info { flex: 1; min-width: 0; }
+  .contact-name  { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .contact-email { font-size: 11px; color: rgba(255,255,255,0.35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .contact-phone { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .contact-tags  { display: flex; gap: 5px; flex-shrink: 0; }
+  .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 3px 8px; border-radius: 20px;
+  }
+  .tag-email { background: rgba(66,153,225,0.18); color: #63b3ed; border: 1px solid rgba(66,153,225,0.3); }
+  .tag-sms   { background: rgba(72,187,120,0.18); color: #68d391; border: 1px solid rgba(72,187,120,0.3); }
+
+  .no-contacts-msg {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    text-align: center;
+    padding: 8px 0;
+  }
+  .no-contacts-msg a {
+    color: #e91e63;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ── SMS prompt modal ── */
+  #smsModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  #smsModal.visible { display: flex; }
+  .sms-modal-box {
+    background: #1e0008;
+    border: 1px solid rgba(233,30,99,0.3);
+    border-radius: 20px;
+    padding: 36px 32px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .sms-modal-box .modal-icon { font-size: 52px; margin-bottom: 14px; }
+  .sms-modal-box h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .sms-modal-box p  { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 24px; }
+  .sms-contact-list { margin-bottom: 24px; text-align: left; }
+  .sms-contact-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 10px; cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    text-decoration: none;
+  }
+  .sms-contact-row:hover { background: rgba(233,30,99,0.15); border-color: rgba(233,30,99,0.3); }
+  .sms-contact-row .sn  { font-size: 14px; font-weight: 600; color: #fff; flex: 1; }
+  .sms-contact-row .sp  { font-size: 12px; color: rgba(255,255,255,0.45); }
+  .sms-contact-row .sa  { font-size: 18px; }
+  .modal-btn-skip {
+    font-size: 13px; color: rgba(255,255,255,0.35); background: none;
+    border: none; cursor: pointer; text-decoration: underline;
+    font-family: 'Inter', sans-serif;
+  }
+  .modal-btn-skip:hover { color: rgba(255,255,255,0.6); }
+</style>
+
+<!-- Background rings -->
+<div class="bg-ring"></div>
+<div class="bg-ring"></div>
+<div class="bg-ring"></div>
+
+<div class="sos-page">
+  <div class="sos-card">
+
+    <div class="sos-badge">Women Safety App</div>
+    <h1 class="sos-heading">Emergency SOS</h1>
+    <p class="sos-sub">
+      Press the button. Your live location will be sent<br>
+      via <strong style="color:#63b3ed;">email</strong> and <strong style="color:#68d391;">SMS</strong> to all your emergency contacts.
+    </p>
+
+    <!-- Status Messages -->
+    <div id="statusLoading" class="status-box status-loading"></div>
+    <div id="statusSuccess" class="status-box status-success"></div>
+    <div id="statusError"   class="status-box status-error"></div>
+    <div id="statusWarning" class="status-box status-warning"></div>
+
+    <!-- SOS Button -->
+    <div class="sos-btn-wrapper">
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <button id="sosButton" onclick="sendSOS()">
+        <span class="btn-icon">🆘</span>
+        <span class="btn-text">SOS</span>
+        <span class="btn-sub">PRESS TO ALERT</span>
+      </button>
+    </div>
+
+    <!-- Coords -->
+    <div id="locationDisplay">📍 <span id="coordsText"></span></div>
+
+    <!-- Info Cards -->
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic-icon">📧</div>
+        <div class="ic-label">Email</div>
+        <div class="ic-value">HTML alert<br>with map link</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">💬</div>
+        <div class="ic-label">SMS</div>
+        <div class="ic-value">Text msg<br>with location</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">📍</div>
+        <div class="ic-label">Location</div>
+        <div class="ic-value">GPS &<br>Google Maps</div>
+      </div>
+    </div>
+
+    <!-- Contacts List -->
+    {% if contacts %}
+    <div class="contacts-section">
+      <h4>📋 Alert will be sent to</h4>
+      {% for c in contacts %}
+      <div class="contact-item">
+        <div class="contact-avatar">{{ c.name|first|upper }}</div>
+        <div class="contact-info">
+          <div class="contact-name">{{ c.name }}</div>
+          {% if c.email %}<div class="contact-email">✉ {{ c.email }}</div>{% endif %}
+          {% if c.phone_number %}<div class="contact-phone">📱 {{ c.phone_number }}</div>{% endif %}
+        </div>
+        <div class="contact-tags">
+          {% if c.email %}<span class="tag tag-email">EMAIL</span>{% endif %}
+          {% if c.phone_number %}<span class="tag tag-sms">SMS</span>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="contacts-section">
+      <div class="no-contacts-msg">
+        ⚠️ No emergency contacts saved yet.<br>
+        <a href="{% url 'manage_contacts' %}">Add contacts now →</a>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- SMS Modal -->
+<div id="smsModal">
+  <div class="sms-modal-box">
+    <div class="modal-icon">💬</div>
+    <h3>Send SMS Alerts</h3>
+    <p>Email sent ✅ Now tap each contact below to send them an SMS with your live location.</p>
+    <div class="sms-contact-list" id="smsContactList"></div>
+    <button class="modal-btn-skip" onclick="closeSmsModal()">Skip SMS — done</button>
+  </div>
+</div>
+
+<script>
+  const CSRF_TOKEN = "{{ csrf_token }}";
+
+  // Contacts from Django (those with phone numbers)
+  const smsContacts = [
+    {% for c in contacts %}{% if c.phone_number %}
+    { name: "{{ c.name|escapejs }}", phone: "{{ c.phone_number|escapejs }}" },
+    {% endif %}{% endfor %}
+  ];
+
+  function showStatus(type, msg) {
+    ['Loading','Success','Error','Warning'].forEach(t => {
+      document.getElementById('status' + t).style.display = 'none';
+    });
+    const el = document.getElementById('status' + type);
+    el.innerHTML = msg;
+    el.style.display = 'block';
+  }
+
+  function openSmsModal(lat, lon) {
+    if (smsContacts.length === 0) return;
+
+    const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+    const body = encodeURIComponent(
+      `🚨 URGENT SOS ALERT!\n\nI need help immediately!\n\nMy live location:\n${mapsLink}\n\nPlease respond ASAP or call emergency services!`
+    );
+
+    const list = document.getElementById('smsContactList');
+    list.innerHTML = '';
+
+    smsContacts.forEach(c => {
+      const phone = c.phone.replace(/\s+/g, '');
+      // sms: URI — works on Android & iOS
+      const smsUri = `sms:${phone}?body=${body}`;
+      const row = document.createElement('a');
+      row.href = smsUri;
+      row.className = 'sms-contact-row';
+      row.innerHTML = `
+        <span class="sn">${c.name}</span>
+        <span class="sp">${c.phone}</span>
+        <span class="sa">💬</span>
+      `;
+      list.appendChild(row);
+    });
+
+    document.getElementById('smsModal').classList.add('visible');
+  }
+
+  function closeSmsModal() {
+    document.getElementById('smsModal').classList.remove('visible');
+  }
+
+  function sendSOS() {
+    const btn = document.getElementById('sosButton');
+    btn.disabled = true;
+
+    showStatus('Loading', '<span class="spinner"></span> Getting your location…');
+
+    if (!navigator.geolocation) {
+      btn.disabled = false;
+      showStatus('Error', '❌ Your browser does not support location. Please use a modern browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const accuracy = Math.round(position.coords.accuracy);
+
+        // Show coords
+        document.getElementById('coordsText').textContent =
+          `${lat.toFixed(5)}, ${lon.toFixed(5)} (±${accuracy}m)`;
+        document.getElementById('locationDisplay').style.display = 'block';
+
+        showStatus('Loading', '<span class="spinner"></span> Sending email alerts to your emergency contacts…');
+
+        // ── Step 1: Send email via Django backend ──
+        fetch('/sos/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': CSRF_TOKEN,
+          },
+          body: JSON.stringify({ latitude: lat, longitude: lon }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          btn.disabled = false;
+
+          if (data.status === 'success') {
+            if (data.twilio_enabled) {
+                showStatus('Success',
+                  `✅ <strong>Alerts sent!</strong><br>` +
+                  `Email sent to ${data.sent_count} contact(s).<br>` +
+                  `SMS sent to ${data.sms_sent} contact(s).`
+                );
+            } else {
+                showStatus('Success',
+                  `✅ <strong>Email alerts sent</strong> to ${data.sent_count} contact(s)!` +
+                  (smsContacts.length > 0
+                    ? `<br>💬 <strong>SMS pop-up opening…</strong> Tap each contact to send SMS.`
+                    : ``)
+                );
+                // ── Step 2: Open SMS modal for each phone contact ──
+                if (smsContacts.length > 0) {
+                  setTimeout(() => openSmsModal(lat, lon), 800);
+                }
+            }
+
+          } else if (data.status === 'warning') {
+            if (data.twilio_enabled) {
+                 showStatus('Warning', '⚠️ ' + data.msg + `<br>Tried SMS too.`);
+            } else {
+                showStatus('Warning', '⚠️ ' + data.msg +
+                  (smsContacts.length > 0 ? '<br>Trying SMS instead…' : '')
+                );
+                if (smsContacts.length > 0) {
+                  setTimeout(() => openSmsModal(lat, lon), 500);
+                }
+            }
+          } else {
+            showStatus('Error', '❌ ' + data.msg);
+            if (!data.twilio_enabled && smsContacts.length > 0) {
+              setTimeout(() => openSmsModal(lat, lon), 500);
+            }
+          }
+        })
+        .catch(err => {
+          btn.disabled = false;
+          showStatus('Error', '❌ Network error. Trying SMS fallback…');
+          if (smsContacts.length > 0) {
+            setTimeout(() => openSmsModal(lat, lon), 500);
+          }
+          console.error(err);
+        });
+      },
+      function(err) {
+        btn.disabled = false;
+        let msg = '❌ Location access denied.';
+        if (err.code === 1) msg = '❌ Location permission denied. Please allow location access in your browser settings.';
+        else if (err.code === 2) msg = '❌ Location unavailable. Make sure GPS is enabled.';
+        else if (err.code === 3) msg = '❌ Location timed out. Please try again.';
+        showStatus('Error', msg);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('smsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSmsModal();
+  });
+</script>
+
+{% endblock %}

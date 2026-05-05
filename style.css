@@ -1,0 +1,7 @@
+
+body { font-family: Arial; background: #f2f2f2; margin: 0; padding: 0; }
+nav { background: #e91e63; color: white; padding: 10px; }
+nav a { color: white; margin-right: 10px; text-decoration: none; }
+.content { padding: 20px; }
+form input, form textarea { width: 100%; padding: 10px; margin: 10px 0; }
+form button { background: #e91e63; color: white; padding: 10px 20px; border: none; }

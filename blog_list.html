@@ -1,0 +1,7 @@
+<h2>📝 Educational Blog</h2>
+{% for post in blogs %}
+    <h3>{{ post.title }}</h3>
+    <small>By {{ post.author }} on {{ post.published_on|date:"M d, Y" }}</small>
+    <p>{{ post.content|truncatewords:30 }}</p>
+    <hr>
+{% endfor %}

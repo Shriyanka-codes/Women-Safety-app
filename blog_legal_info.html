@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="info-container">
+    <h2>📚 Blog & Legal Info</h2>
+
+    <div class="section">
+        <h3>🧠 Educational Content & Tutorials</h3>
+        <p>Stay informed and empowered with our curated blog posts and tutorials.</p>
+        <ul>
+            <li><a href="https://youtu.be/KVpxP3ZZtAc?si=YeQxHz8Bllt5BimE" target="_blank">Basic Self-Defense Techniques</a></li>
+            <li><a href="https://www.youtube.com/live/40e9sFm9Nko?si=GyxlRKy-HMjY4qgT" target="_blank">Indian Women Legal Rights</a></li>
+            <li><a href="https://youtu.be/MNvGqxAIGFo?si=4eev0EGeYwUC1wYm" target="_blank">How to Handle Dangerous Situations</a></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>⚖️ Legal Rights for Women in India</h3>
+        <p>Every woman in India is protected under the law. Here are a few key rights:</p>
+        <ul>
+            <li>🚨 **Right to file a complaint at any police station** (Zero FIR)</li>
+            <li>👩‍⚖️ **Section 354 IPC** – Protection from assault or criminal force</li>
+            <li>📞 **Helpline Numbers**: 1091 (Women), 181 (Legal aid), 100 (Police)</li>
+            <li>👮 **Right to privacy during statement** – You can demand a female officer</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>📞 Helpline Numbers</h3>
+        <ul>
+            <li>📱 1091 – Women's Helpline</li>
+            <li>📱 181 – Women in Distress Legal Helpline</li>
+            <li>📱 100 – Police</li>
+            <li>📱 112 – National Emergency Number</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.info-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    font-family: Arial, sans-serif;
+}
+
+.info-container h2 {
+    color: #e91e63;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section h3 {
+    color: #d81b60;
+    margin-bottom: 10px;
+}
+
+.section ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.section ul li {
+    background: #fce4ec;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 6px;
+    color: #333;
+}
+
+.section a {
+    color: #d81b60;
+    text-decoration: none;
+}
+
+.section a:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

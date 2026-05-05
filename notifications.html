@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>🔔 Your contents</h2>
+
+{% if notifications %}
+<ul>
+  {% for notif in notifications %}
+    <li>{{ notif.timestamp }} - {{ notif.message }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No notifications yet.</p>
+<nav>
+<a href="{% url 'blog_legal_info' %}">📚 Blog & Legal Info</a>
+</nav>
+{% endif %}
+
+
+<a href="{% url 'home' %}" class="back-button">← Back to Dashboard</a>
+
+{% endblock %}
